@@ -1,28 +1,24 @@
 const express = require('express');
-// Import and require mysql2
+
 const mysql = require('mysql2');
 
 const PORT = process.env.PORT || 3001;
 const app = express();
 
-// Express middleware
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
-// Connect to database
+
 const db = mysql.createConnection(
   {
     host: 'localhost',
-    // MySQL username,
     user: 'root',
-    // TODO: Add MySQL password here
     password: 'root',
     database: 'employees_db'
   },
   console.log(`Connected to the employees_db database.`)
 );
 
-// Create a movie
 app.post('/api/new-department', ({ body }, res) => {
   const sql = `INSERT INTO department (department_name)
     VALUES (?)`;
@@ -40,7 +36,6 @@ app.post('/api/new-department', ({ body }, res) => {
   });
 });
 
-// Read all movies
 app.get('/api/department', (req, res) => {
   const sql = `SELECT id, department_name AS title FROM department`;
   
@@ -56,7 +51,6 @@ app.get('/api/department', (req, res) => {
   });
 });
 
-// Delete a movie
 app.delete('/api/department/:id', (req, res) => {
   const sql = `DELETE FROM department WHERE id = ?`;
   const params = [req.params.id];
@@ -78,7 +72,6 @@ app.delete('/api/department/:id', (req, res) => {
   });
 });
 
-// Read list of all employees and associated departments name using LEFT JOIN
 app.get('/api/department-employee', (req, res) => {
   const sql = `SELECT departments.department_name AS department, employees.employee FROM employees LEFT JOIN departments ON employee.department_id = departments.id ORDER BY departments.department_name;`;
   db.query(sql, (err, rows) => {
@@ -93,7 +86,6 @@ app.get('/api/department-employee', (req, res) => {
   });
 });
 
-// BONUS: Update employee name
 app.put('/api/employee/:id', (req, res) => {
   const sql = `UPDATE employee SET employee = ? WHERE id = ?`;
   const params = [req.body.employee, req.params.id];
@@ -114,7 +106,6 @@ app.put('/api/employee/:id', (req, res) => {
     }
   });
 });
-
 
 app.use((req, res) => {
   res.status(404).end();
